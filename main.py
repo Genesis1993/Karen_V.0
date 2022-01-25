@@ -4,20 +4,18 @@ import datetime
 import wikipedia
 import pyjokes
 import speech_recognition as sr
-import requests, sys, webbrowser, bs4
+#  import requests, sys, webbrowser, bs4
 import urllib.request
 import urllib.parse
 import re
 import time
-from easySpeech import speech
 
-# setting AI name heidi
-ai_name = "tony"
+ai_name = "tony"  # setting AI name
 
-# Setting which microphone to use
-mic_index = sr.Microphone.list_microphone_names()
-print(mic_index)
-device_index = mic_index.index('MacBook Air Microphone')
+#  Setting which microphone to use
+mic_list = sr.Microphone.list_microphone_names()  # will get the list of all microphone connected
+print(mic_list)
+device_index = mic_list.index('MacBook Air Microphone')  #
 mic = sr.Microphone(device_index=device_index)
 
 # shorthand sr.Recognizer() as recog for easy typing
@@ -25,7 +23,7 @@ recog = sr.Recognizer()
 
 # Set voice parameter, Speed, volume and voice it self
 engine = pyttsx3.init()
-voices: object = engine.getProperty('voices')
+voices = engine.getProperty('voices')
 # For loop just to see attribute of voices. note voices is dictionary, voice index is int
 # i.name is str and i.languages is list
 
@@ -44,7 +42,8 @@ def write_voice():
     with mic:  # with is the manifistation or shorthand of mic._enter_ and _exit_
         print("I'm listening")
         recog.adjust_for_ambient_noise(mic, duration=.5)  # listener.adjust_for_ambient_noise(mic,#duration=5)
-        # audio_stopper = recog.listen_in_background(mic, callback)  #callback as a link will call the function dont use parentesis because it gives results just the name of the function for th mother function to use it as his
+        # audio_stopper = recog.listen_in_background(mic, callback)  #callback as a link will call the function dont
+        # use parentesis because it gives results just the name of the function for th mother function to use it as his
         voice = recog.listen(mic)  # set voice as the signal created from the .listen function of SR
 
     try:
@@ -74,7 +73,7 @@ print(mic.list_microphone_names()[device_index])
 #     print(recog.recognize_google(audio))
 
 
-def say_text(text):
+def say_text(text: str):
     engine.say(text)
     engine.runAndWait()
 
@@ -86,8 +85,8 @@ def parsing(url):
     data = data.encode('utf-8')
     req = urllib.request.Request(url, data)
     resp = urllib.request.urlopen(req)
-    respData = resp.read()
-    paragraphs = re.findall(r'<p>(.*?)</p>', str(respData))
+    resp_data = resp.read()
+    paragraphs = re.findall(r'<p>(.*?)</p>', str(resp_data))
     print(paragraphs)
     # for eachP in paragraphs:
     #     print(eachP)
@@ -95,8 +94,7 @@ def parsing(url):
     return paragraphs
 
 
-def command(x):
-
+def command(x: str):
     try:
         # if x == 'tony':
         #     say_text('Yes Sir?')
@@ -132,16 +130,16 @@ def command(x):
             print(info)
             say_text(info)
         elif 'spell' in x:
-            x= x. replace('spell', "")
-            x= x. replace(' ', '')
-            y= list(x)
-            c = 0
-            engine.setProperty('volume', 1)
-            while c < len(y):
-                say_text(y[c])
-                c = c + 1
+            x = x.replace('spell', "")
+            x = x.replace(' ', '')
+            y = list(x)
+            for letter in y:
+                engine.setProperty('volume', 1)
+                time.sleep(1)
+                say_text(letter)
+                time.sleep(1)
             engine.setProperty('volume', .2)
-    except wikipedia.exceptions.PageError:      #handling specific error by the use of try and except
+    except wikipedia.exceptions.PageError:  # handling specific error by the use of try and except
         say_text("I can't see it on wikipedia... You want me to search it on youtube?")
     except NameError:
         say_text("I do not know him name error")
@@ -158,7 +156,8 @@ def command(x):
 
 
 while True:
-    # say_text("Now, instead of using an audio file as the source, you will use the default system microphone. You can access this by creating an instance of the Microphone class.")
+    # say_text("Now, instead of using an audio file as the source, you will use the default system microphone.
+    # You can access this by creating an instance of the Microphone class.")
     a = write_voice()
     if a == ai_name:
         z = 1
